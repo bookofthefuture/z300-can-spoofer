@@ -26,65 +26,53 @@ struct can_frame canMsg1;
 struct can_frame canMsg2;
 struct can_frame canMsg3;
 struct can_frame canMsg4;
-struct can_frame canMsg5;
 
 MCP2515 mcp2515(10);
 
 void setup() {
   canMsg1.can_id  = 0x355;
   canMsg1.can_dlc = 8;
-  canMsg1.data[0] = 0x8E;
-  canMsg1.data[1] = 0x87;
-  canMsg1.data[2] = 0x32;
-  canMsg1.data[3] = 0xFA;
-  canMsg1.data[4] = 0x26;
-  canMsg1.data[5] = 0x8E;
-  canMsg1.data[6] = 0xBE;
-  canMsg1.data[7] = 0x86;
+  canMsg1.data[0] = 0x53;
+  canMsg1.data[1] = 0x00;
+  canMsg1.data[2] = 0x64;
+  canMsg1.data[3] = 0x00;
+  canMsg1.data[4] = 0x3E;
+  canMsg1.data[5] = 0x03;
+  canMsg1.data[6] = 0x02;
+  canMsg1.data[7] = 0x00;
 
   canMsg2.can_id  = 0x356;
   canMsg2.can_dlc = 8;
-  canMsg2.data[0] = 0x10;
-  canMsg2.data[1] = 0x00;
-  canMsg2.data[2] = 0x10;
-  canMsg2.data[3] = 0x00;
-  canMsg2.data[4] = 0x28;
+  canMsg2.data[0] = 0x58;
+  canMsg2.data[1] = 0x92;
+  canMsg2.data[2] = 0x00;
+  canMsg2.data[3] = 0x01;
+  canMsg2.data[4] = 0x51;
   canMsg2.data[5] = 0x00;
-  canMsg2.data[6] = 0x35;
-  canMsg2.data[7] = 0x00;
+  canMsg2.data[6] = 0x52;
+  canMsg2.data[7] = 0x0F;
 
-  canMsg3.can_id  = 0x355;
+  canMsg3.can_id  = 0x35A;
   canMsg3.can_dlc = 8;
-  canMsg3.data[0] = 0x8E;
-  canMsg3.data[1] = 0x87;
-  canMsg3.data[2] = 0x32;
-  canMsg3.data[3] = 0xFA;
-  canMsg3.data[4] = 0x26;
-  canMsg3.data[5] = 0x8E;
-  canMsg3.data[6] = 0xBE;
-  canMsg3.data[7] = 0x86;
+  canMsg3.data[0] = 0x00;
+  canMsg3.data[1] = 0x00;
+  canMsg3.data[2] = 0x00;
+  canMsg3.data[3] = 0x00;
+  canMsg3.data[4] = 0x00;
+  canMsg3.data[5] = 0x00;
+  canMsg3.data[6] = 0x00;
+  canMsg3.data[7] = 0x00;
 
-  canMsg4.can_id  = 0x356;
+  canMsg4.can_id  = 0x373;
   canMsg4.can_dlc = 8;
-  canMsg4.data[0] = 0x10;
-  canMsg4.data[1] = 0x00;
-  canMsg4.data[2] = 0x10;
-  canMsg4.data[3] = 0x00;
-  canMsg4.data[4] = 0x28;
-  canMsg4.data[5] = 0x00;
-  canMsg4.data[6] = 0x35;
-  canMsg4.data[7] = 0x00;
-
-  canMsg5.can_id  = 0x355;
-  canMsg5.can_dlc = 8;
-  canMsg5.data[0] = 0x8E;
-  canMsg5.data[1] = 0x87;
-  canMsg5.data[2] = 0x32;
-  canMsg5.data[3] = 0xFA;
-  canMsg5.data[4] = 0x26;
-  canMsg5.data[5] = 0x8E;
-  canMsg5.data[6] = 0xBE;
-  canMsg5.data[7] = 0x86;
+  canMsg4.data[0] = 0x12;
+  canMsg4.data[1] = 0x0F;
+  canMsg4.data[2] = 0x50;
+  canMsg4.data[3] = 0x0F;
+  canMsg4.data[4] = 0x11;
+  canMsg4.data[5] = 0x01;
+  canMsg4.data[6] = 0x19;
+  canMsg4.data[7] = 0x01;
 
   
   while (!Serial);
@@ -105,7 +93,6 @@ void loop() {
   mcp2515.sendMessage(&canMsg2);
   mcp2515.sendMessage(&canMsg3);
   mcp2515.sendMessage(&canMsg4);
-  mcp2515.sendMessage(&canMsg5);
   
   Serial.println("Messages sent");
   delay(100);
