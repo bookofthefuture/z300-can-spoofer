@@ -21,6 +21,8 @@
 #include <mcp2515.h>
 
 #define LEDpin 7
+#define sendModePin 6
+#define quietModePin 5
 
 struct can_frame canMsg1;
 struct can_frame canMsg2;
@@ -83,19 +85,26 @@ void setup() {
   mcp2515.setNormalMode();
   pinMode(LEDpin, OUTPUT);
   digitalWrite(LEDpin, LOW);
+  pinMode(sendModePin, INPUT_PULLUP);
+  pinMode(quietModePin, INPUT_PULLUP);
+  
   Serial.println("Z300S CANBus Spoofer");
   Serial.println("Plays back canbus messages from Z3 and EV component canbus including: BMS");
 }
 
 void loop() {
-  digitalWrite(LEDpin, HIGH);
-  mcp2515.sendMessage(&canMsg1);
-  mcp2515.sendMessage(&canMsg2);
-  mcp2515.sendMessage(&canMsg3);
-  mcp2515.sendMessage(&canMsg4);
-  
-  Serial.println("Messages sent");
-  delay(100);
-  digitalWrite(LEDpin, LOW);
-  delay(500);
-}
+
+  if(sendModePin == LOW && quietModePin == HIGH) {
+    digitalWrite(LEDpin, HIGH);
+    mcp2515.sendMessage(&canMsg1);
+    mcp2515.sendMessage(&canMsg2);
+    mcp2515.sendMessage(&canMsg3);
+    mcp2515.sendMessage(&canMsg4);
+    Serial.println("Messages sent");
+    delay(100);
+    digitalWrite(LEDpin, LOW);
+    delay(500);
+  }  else if (sendModePin == HIGH && quietModePin == LOW){
+    digitalWrite(LEDpin, HIGH);
+    } else {}
+  } 
