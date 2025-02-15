@@ -27,9 +27,11 @@
 #include <SPI.h>
 #include <mcp2515.h>
 
-#define LEDpin 7
+#define LEDpin 3
 #define sendModePin 6
 #define quietModePin 5
+int sendMode;
+int quietMode;
 
 struct can_frame canMsg1;
 struct can_frame canMsg2;
@@ -113,8 +115,10 @@ void setup() {
 }
 
 void loop() {
-
-  if(sendModePin == LOW && quietModePin == HIGH) {
+  sendMode = digitalRead(sendModePin);
+  quietMode = digitalRead(quietModePin);
+  if(sendMode == LOW && quietMode == HIGH) {
+    Serial.println("Send Mode");
     digitalWrite(LEDpin, HIGH);
     mcp2515.sendMessage(&canMsg1);
     mcp2515.sendMessage(&canMsg2);
@@ -122,10 +126,12 @@ void loop() {
     mcp2515.sendMessage(&canMsg4);
     mcp2515.sendMessage(&canMsg5);    
     Serial.println("Messages sent");
-    delay(100);
+    delay(500);
     digitalWrite(LEDpin, LOW);
     delay(500);
-  }  else if (sendModePin == HIGH && quietModePin == LOW){
+  }  else if (sendMode == HIGH && quietMode == LOW){
+    Serial.println("Quiet Mode");
     digitalWrite(LEDpin, HIGH);
+    delay(1000);
     } else {}
   } 

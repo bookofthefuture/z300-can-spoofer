@@ -4,7 +4,7 @@
 struct can_frame canMsg;
 MCP2515 mcp2515(10);
 
-#define LEDpin 3
+#define LEDpin 7
 
 void setup() {
   Serial.begin(115200);
