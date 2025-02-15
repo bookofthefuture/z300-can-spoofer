@@ -1,20 +1,27 @@
-/*
- * 0x286 00 4A 50 25 00 00 00 00 
- * 0X377 05 9E 00 80 42 43 3E 22
- * 0X389 9F 00 00 4E 54 C0 00 00 
- * 0X563 AA AA AA AA 82 2A 00 00
- * 0X568 00 02 80 0A 00 00 A8 AA
- * 0X569 AA A8 80 02 00 00 00 00 
- * 0X613 D7 6D FF 2D 55 00 00 00 
- * 0X615 00 00 00 FF 00 00 00 00
- * 0X663 01 33 30 30 00 00 00 00
- * 0X664 02 83 06 32 F3 00 00 00  
- * 0x351 69 0F 3C 00 2C 01 00 0C
- * 0x355 53 00 64 00 3E 03 02 00 - SoC / SoH
+/* Can Comms on Car:
+// BMS - done
+// Charger
+// Heater  - Done
+// Shunt
+// Inverter
+// Car
+*/
+
+/* BMS
+/* 0x355 53 00 64 00 3E 03 02 00 - SoC / SoH
  * 0x356 58 92 00 01 51 00 52 0F - pack voltage / avg temp / avg voltage
  * 0x35A 00 00 00 00 00 00 00 00 - warnings 
  * 0x373 12 0F 50 0F 11 01 19 01 - high/low voltages/temps
  * 0x379 00 10 00 10 00 10 00 10 - remaining amp hours / range estimate
+ * 
+ * HEATER
+ * 0x398 ID 00 09 00 3B 3B 00 00 00 at 100ms byte 3 seems to be water temperature inlet, byte 4 water temperature outlet
+ * 0x630 ID 00 00 00 00 00 00 00 00 at 500ms
+ * 0x062D ID 00 00 00 00 00 00 00 00 at 500ms
+ * 0x06BD ID 00 00 00 00 00 00 00 00 at 500ms
+ * When HV is connected 0x398 changes to the message below.
+ * 0x398 ID 00 00 00 3B 3B 00 00 00 at 100ms
+
 */
 
 #include <SPI.h>
@@ -32,6 +39,7 @@ struct can_frame canMsg4;
 MCP2515 mcp2515(10);
 
 void setup() {
+  /* BMS */
   canMsg1.can_id  = 0x355;
   canMsg1.can_dlc = 8;
   canMsg1.data[0] = 0x53;
@@ -76,6 +84,18 @@ void setup() {
   canMsg4.data[6] = 0x19;
   canMsg4.data[7] = 0x01;
 
+/* HEATER */
+  canMsg5.can_id  = 0x398;
+  canMsg5.can_dlc = 8;
+  canMsg5.data[0] = 0x00;
+  canMsg5.data[1] = 0x00;
+  canMsg5.data[2] = 0x00;
+  canMsg5.data[3] = 0x3B;
+  canMsg5.data[4] = 0x3B;
+  canMsg5.data[5] = 0x00;
+  canMsg5.data[6] = 0x00;
+  canMsg5.data[7] = 0x00;
+  
   
   while (!Serial);
   Serial.begin(115200);
@@ -100,6 +120,7 @@ void loop() {
     mcp2515.sendMessage(&canMsg2);
     mcp2515.sendMessage(&canMsg3);
     mcp2515.sendMessage(&canMsg4);
+    mcp2515.sendMessage(&canMsg5);    
     Serial.println("Messages sent");
     delay(100);
     digitalWrite(LEDpin, LOW);
