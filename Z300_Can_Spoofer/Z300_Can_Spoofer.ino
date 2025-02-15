@@ -55,8 +55,10 @@
 #include <TaskScheduler.h> // https://github.com/arkhipenko/TaskScheduler
 
 #define LEDpin 7
-#define sendModePin 6
-#define quietModePin 5
+#define Mode1Pin 6
+#define Mode2Pin 5
+int Mode1PinState;
+int Mode2PinState;
 int LEDstate = 0;
 
 void ms10Task();
@@ -212,8 +214,8 @@ void setup() {
   mcp2515.setNormalMode();
   pinMode(LEDpin, OUTPUT);
   digitalWrite(LEDpin, LOW);
-  pinMode(sendModePin, INPUT_PULLUP);
-  pinMode(quietModePin, INPUT_PULLUP);
+  pinMode(Mode1Pin, INPUT_PULLUP);
+  pinMode(Mode2Pin, INPUT_PULLUP);
   
   Serial.println("Z300S CANBus Spoofer");
   Serial.println("Plays back canbus messages from Z3 and EV component canbus including: BMS");
@@ -226,7 +228,7 @@ void setup() {
   runner.addTask(ms100);
   ms100.enable();
 
-  runner.addTask(ms100);
+  runner.addTask(ms500);
   ms500.enable();
 
   runner.addTask(ms1000);
@@ -234,14 +236,27 @@ void setup() {
 }
 
 void loop() {
-  if (sendModePin == HIGH && quietModePin == LOW){
+  runner.execute();
+  Mode1PinState = digitalRead(Mode1Pin);
+  Mode2PinState = digitalRead(Mode2Pin);
+  if (Mode1PinState == HIGH && Mode2PinState == HIGH){
+    digitalWrite(LEDpin, LOW);
+    LEDstate = 0;
+    //Serial.println("Quiet Mode");
+  } else if (Mode1PinState == LOW && Mode2PinState == HIGH){
+    //Serial.println("Mode 1");
     digitalWrite(LEDpin, HIGH);
-    LEDstate = 1;
-  }
+    LEDstate = 1;    
+  } else if (Mode1PinState == HIGH && Mode2PinState ==LOW){
+    //Serial.println("Mode 2");
+    digitalWrite(LEDpin, HIGH);
+    LEDstate = 1;    
+  } else {}
+    
 } 
 
 void ms10Task() {
-  if(sendModePin == LOW && quietModePin == HIGH) {
+  if(Mode1PinState == LOW && Mode2PinState == HIGH) {
       mcp2515.sendMessage(&canMsg5);  
       ms10count++;
       if(ms10count > 100) {
@@ -252,7 +267,7 @@ void ms10Task() {
 }
 
 void ms100Task() {
-  if(sendModePin == LOW && quietModePin == HIGH) {
+  if(Mode1PinState == LOW && Mode2PinState == HIGH) {
     mcp2515.sendMessage(&canMsg6);  // 0x286
     mcp2515.sendMessage(&canMsg7);  // 0x377
     mcp2515.sendMessage(&canMsg8);  // 0x389
@@ -269,7 +284,7 @@ void ms100Task() {
 void ms500Task() {
 }
 void ms1000Task() {
-  if(sendModePin == LOW && quietModePin == HIGH) {
+  if(Mode1PinState == LOW && Mode2PinState == HIGH) {
     if(LEDstate == 0){
       digitalWrite(LEDpin, HIGH);
       LEDstate = 1;
